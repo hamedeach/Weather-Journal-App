@@ -2,6 +2,8 @@
 //weather API 
 // api.openweathermap.org/data/2.5/weather?zip={zip code},{country code}&appid={API key}
 const weatherAPI_Key = '5508a205aec7e6ad6f041ac4789357c0';
+// temp. measure unit 
+const WeatherAPI_Unit ='&units=metric';
 
 
 // Create a new date instance dynamically with JS
@@ -26,7 +28,7 @@ async function btnGenerateClickFunc() {
 
 
     //build API URL
-    const weatherAPI_URL = `https://api.openweathermap.org/data/2.5/weather?zip=${cityZipCode}&appid=${weatherAPI_Key}`;
+    const weatherAPI_URL = `https://api.openweathermap.org/data/2.5/weather?zip=${cityZipCode}&appid=${weatherAPI_Key}${WeatherAPI_Unit}`;
     // get the wather data from the API 
     const cityTemp = await getWeatherData(weatherAPI_URL);
     if (cityTemp === false) return;
@@ -150,9 +152,9 @@ function updateUI(serverdata) {
         alert("Invalid server data !");
         return false;
     }
-    document.querySelector('#date').textContent = `Date : ${serverdata.projectData.date}`;
-    document.querySelector('#temp').textContent = `Temp. ${serverdata.projectData.temp}`;
-    document.querySelector('#content').textContent =`Feeling ${serverdata.projectData.content}`;
+    document.querySelector('#date').innerHTML  = `Date : ${serverdata.projectData.date}`;
+    document.querySelector('#temp').innerHTML  = `Temperature : ${serverdata.projectData.temp}`;
+    document.querySelector('#content').innerHTML  =`I Feel ${serverdata.projectData.content}`;
 };
 
 
