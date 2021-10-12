@@ -34,7 +34,8 @@ async function btnGenerateClickFunc() {
     const theContent = getTxtValue('feelings');
     if (theContent === false) {
         //  warn the user if empty content (optional)
-        theContent = '';
+        alert('empty feelings  !');
+        return;
     }
 
     // post weather data to the server
@@ -49,7 +50,10 @@ async function btnGenerateClickFunc() {
 
         //    return
     }
-    console.log(getLocalRes);
+    console.log(getLocalRes.localdata);
+    updateUI(getLocalRes.localdata);
+
+
 
 
 };
@@ -138,9 +142,18 @@ async function getLocalServerData(url) {
         return false;
     }
 
-}
+};
 
-
+//function used to updated the UI
+function updateUI(serverdata) {
+    if (!serverdata) {
+        alert("Invalid server data !");
+        return false;
+    }
+    document.querySelector('#date').textContent = `Date : ${serverdata.projectData.date}`;
+    document.querySelector('#temp').textContent = `Temp. ${serverdata.projectData.temp}`;
+    document.querySelector('#content').textContent =`Feeling ${serverdata.projectData.content}`;
+};
 
 
 
