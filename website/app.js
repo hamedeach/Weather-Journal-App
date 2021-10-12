@@ -152,9 +152,15 @@ function updateUI(serverdata) {
         alert("Invalid server data !");
         return false;
     }
+    try{
     document.querySelector('#date').innerHTML  = `Date : ${serverdata.projectData.date}`;
     document.querySelector('#temp').innerHTML  = `Temperature : ${serverdata.projectData.temp}`;
     document.querySelector('#content').innerHTML  =`I Feel ${serverdata.projectData.content}`;
+    }
+    catch(error){
+        console.log("ERROR : ", error);
+        return false ;
+    }
 };
 
 
