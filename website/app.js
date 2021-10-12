@@ -6,7 +6,7 @@ const weatherAPI_Key = '5508a205aec7e6ad6f041ac4789357c0';
 
 // Create a new date instance dynamically with JS
 let d = new Date();
-let newDate = d.getMonth() + '.' + d.getDate() + '.' + d.getFullYear();
+let newDate = (d.getMonth() + 1) + '.' + d.getDate() + '.' + d.getFullYear();
 
 
 // get the generate button by id from the document
@@ -15,7 +15,7 @@ btnGenerate.addEventListener('click', btnGenerateClickFunc);
 
 
 // generate button click function.
-function btnGenerateClickFunc() {
+async function btnGenerateClickFunc() {
 
     const cityZipCode = getTxtValue('zip');
     if (cityZipCode === false) {
@@ -28,13 +28,28 @@ function btnGenerateClickFunc() {
     //build API URL
     const weatherAPI_URL = `https://api.openweathermap.org/data/2.5/weather?zip=${cityZipCode}&appid=${weatherAPI_Key}`;
     // get the wather data from the API 
-    const cityTemp =  getWeatherData(weatherAPI_URL);
-    if (cityTemp ===false)return;
+    const cityTemp = await getWeatherData(weatherAPI_URL);
+    if (cityTemp === false) return;
 
     const theContent = getTxtValue('feelings');
     if (theContent === false) {
-      // to warn the user if empty content !!
+        //  warn the user if empty content (optional)
+        theContent = '';
     }
+
+    // post weather data to the server
+    const postLocalRes = await postWeatherData('/postWeather', newDate, cityTemp, theContent);
+    if (postLocalRes === false) {
+
+        //    return
+    }
+
+    const getLocalRes = await getLocalServerData('/getWeather');
+    if (getLocalRes === false) {
+
+        //    return
+    }
+    console.log(getLocalRes);
 
 
 };
@@ -53,9 +68,7 @@ async function getWeatherData(url) {
     try {
         const api_Response = await fetch(url);
         console.log(api_Response);
-        console.log(api_Response.status);
-        if(api_Response.status !==200  && api_Response.status !=="ok")
-        {
+        if (api_Response.status !== 200 && api_Response.status !== "ok") {
             alert(`Can not get weather data ! \n API Status message : ${api_Response.statusText}`);
             return false;
         }
@@ -69,12 +82,63 @@ async function getWeatherData(url) {
     }
     catch (error) {
         console.log('Error : ', error);
+
     }
 
 
 };
 
+// function used to post data to the server
+async function postWeatherData(url, thedate = newDate, citytemp = 0.0, thecontent = '') {
+    if (url === '') return false;
+    const response = await fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers:
+            { 'Content-Type': 'application/json', },
+        body: JSON.stringify({
+            date: thedate,
+            temp: citytemp,
+            content: thecontent
+        })
+    });
+    try {
+        const serverResponse = await response.json();
+        console.log(serverResponse);
+        if (serverResponse.status !== "ok") {
+            alert(`failed to post !`);
+            return false;
+        }
+        console.log(`INFO  : Post weather data OK`);
+    }
+    catch (error) {
+        console.log(`Error  : Post weather data Error : ${error}`);
+        return false;
+    }
+};
 
+// get the weather data from node server 
+async function getLocalServerData(url) {
+    if (url === '') return false;
+    const response = await fetch(url);
+    console.log(response);
+    try {
+        const serverResponse = await response.json();
+        console.log(serverResponse);
+
+        if (serverResponse.status !== "ok") {
+            alert(`failed to get !`);
+            return false;
+        }
+        console.log(`INFO  : get weather data OK`);
+        return serverResponse;
+    }
+    catch (error) {
+        console.log(`Error  : Post weather data Error : ${error}`);
+        return false;
+    }
+
+}
 
 
 

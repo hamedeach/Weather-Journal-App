@@ -29,15 +29,18 @@ function listenCallBack(){
     console.log(`Info : Server is running on localhost:${portNo}`);
   };
 
-// get route
+// get route to get the local server data 
 app.get('/getWeather',(request, response)=> {
-    response.send(projectData);
+    response.send({
+        status:'ok',
+        localdata:{projectData}
+    });
   });
 
 
-// POST route
+// POST route to add data to the local server 
 app.post('/postWeather' ,(request, response)=> {
-    console.log(request.body);
     projectData = {...request.body};
-    response.send();
+    console.log(projectData);
+    response.send({status: 'ok'});
   });
