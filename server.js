@@ -23,9 +23,21 @@ app.use(express.static('website'));
 
 
 // Setup Server
-const port = 8080;
-const server = app.listen(port, listening);
-function listening(){
-    // console.log(server);
-    console.log(`running on localhost: ${port}`);
+const portNo = 8080;
+const server = app.listen(portNo, listenCallBack);
+function listenCallBack(){
+    console.log(`Info : Server is running on localhost:${portNo}`);
   };
+
+// get route
+app.get('/getWeather',(request, response)=> {
+    response.send(projectData);
+  });
+
+
+// POST route
+app.post('/postWeather' ,(request, response)=> {
+    console.log(request.body);
+    projectData = {...request.body};
+    response.send();
+  });
